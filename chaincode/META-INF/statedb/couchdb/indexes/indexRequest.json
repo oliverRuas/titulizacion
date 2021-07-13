@@ -1,0 +1,8 @@
+{
+    "index":{
+        "fields":["docType","bonista"]
+        },
+        "ddoc":"indexRequestDoc",
+        "name":"indexRequest",
+        "type":"json"
+    }

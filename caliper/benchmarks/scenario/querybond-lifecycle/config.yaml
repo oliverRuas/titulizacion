@@ -1,0 +1,28 @@
+test:
+  name: "Payment Simulation"
+  description: "This benchmark scenario will simulate a situation where all investors redeem their tokens."
+  workers:
+    type: local
+    number: 2
+  rounds:
+    - label: querybonds
+      txNumber: 100
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 5
+      callback: benchmarks/callbacks/ppa/querybond/querybond.js
+      arguments:
+        minterOrg: investor
+        invokerMspId: investorMSP
+        client: investor-client-1
+        endorser1Org: servicer
+        endorser2Org: farmer
+observer:
+  type: local
+  interval: 1
+monitor:
+  interval: 1
+  type: ["docker"]
+  docker:
+    containers: ["all"]

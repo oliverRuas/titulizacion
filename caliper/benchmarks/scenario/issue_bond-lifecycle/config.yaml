@@ -1,0 +1,29 @@
+test:
+  name: "Payment Simulation"
+  description: "This benchmark scenario will issue bond as a UTXO model."
+  workers:
+    type: local
+    number: 3
+  rounds:
+    - label: issuebond
+      txNumber: 100
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 25
+      callback: benchmarks/callbacks/ppa/issue_bond/issue_bond.js
+      arguments:
+        minterOrg: spv
+        invokerMspId: spvMSP
+        client: spv-client
+        endorser1Org: servicer
+        # endorser2Org: farmer
+        endorser2Org: investor
+observer:
+  type: local
+  interval: 1
+monitor:
+  interval: 1
+  type: ["docker"]
+  docker:
+    containers: ["all"]

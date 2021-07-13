@@ -1,0 +1,29 @@
+test:
+  name: "Request Bond Simulation"
+  description: "Benchmark"
+  workers:
+    type: local
+    number: 2
+  rounds:
+    - label: queryppa
+      txNumber: 100
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 1
+      callback: benchmarks/callbacks/ppa/queryppa/queryppa.js
+      arguments:
+        minterOrg: investor
+        invokerMspId: investorMSP
+        client: investor-client-1
+        endorser1Org: spv
+        endorser2Org: farmer
+        # endorser3Org: spv
+observer:
+  type: local
+  interval: 1
+monitor:
+  interval: 1
+  type: ["docker"]
+  docker:
+    containers: ["all"]

@@ -1,0 +1,158 @@
+version: '2'
+
+networks:
+   securitization:
+
+services:
+   tls-ca-servicer:
+      container_name: tls-ca-servicer
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "7054:7054"
+      volumes:
+         - ./fabric-ca/servicer/tls-ca:/etc/hyperledger/fabric-ca-server
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: >
+         sh -c "fabric-ca-server start -b tls-ca-servicer-admin:tls-ca-servicer-adminpw"
+      networks:
+         - securitization
+
+   rootca-servicer:
+      container_name: rootca-servicer
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "7055:7054"
+      volumes:
+         - ./fabric-ca/servicer/ca:/etc/hyperledger/fabric-ca-server      
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: >
+         sh -c "fabric-ca-server start -b rootca-servicer-admin:rootca-servicer-adminpw"
+      networks:
+         - securitization
+
+
+
+   tls-ca-farmer:
+      container_name: tls-ca-farmer
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "8054:7054"
+      volumes:
+         - ./fabric-ca/farmer/tls-ca:/etc/hyperledger/fabric-ca-server
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: >
+         sh -c "fabric-ca-server start -b tls-ca-farmer-admin:tls-ca-farmer-adminpw"
+      networks:
+         - securitization
+
+   rootca-farmer:
+      container_name: rootca-farmer
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "8055:7054"
+      volumes:
+         - ./fabric-ca/farmer/ca:/etc/hyperledger/fabric-ca-server      
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: >
+         sh -c "fabric-ca-server start -b rootca-farmer-admin:rootca-farmer-adminpw"
+      networks:
+         - securitization
+
+   # tls-ca-aggregator:
+   #    container_name: tls-ca-aggregator
+   #    image: hyperledger/fabric-ca:1.4.8
+   #    ports:
+   #       - "9054:7054"
+   #    volumes:
+   #       - ./fabric-ca/aggregator/tls-ca:/etc/hyperledger/fabric-ca-server
+   #    environment:
+   #       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+   #       - FABRIC_CA_SERVER_TLS_ENABLED=true
+   #    command: >
+   #       sh -c "fabric-ca-server start -b tls-ca-aggregator-admin:tls-ca-aggregator-adminpw"
+   #    networks:
+   #       - securitization
+
+   # rootca-aggregator:
+   #    container_name: rootca-aggregator
+   #    image: hyperledger/fabric-ca:1.4.8
+   #    ports:
+   #       - "9055:7054"
+   #    volumes:
+   #       - ./fabric-ca/aggregator/ca:/etc/hyperledger/fabric-ca-server      
+   #    environment:
+   #       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+   #       - FABRIC_CA_SERVER_TLS_ENABLED=true
+   #    command: >
+   #       sh -c "fabric-ca-server start -b rootca-aggregator-admin:rootca-aggregator-adminpw"
+   #    networks:
+   #       - securitization
+
+   tls-ca-spv:
+      container_name: tls-ca-spv
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "10054:7054"
+      volumes:
+         - ./fabric-ca/spv/tls-ca:/etc/hyperledger/fabric-ca-server
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: >
+         sh -c "fabric-ca-server start -b tls-ca-spv-admin:tls-ca-spv-adminpw"
+      networks:
+         - securitization
+
+   rootca-spv:
+      container_name: rootca-spv
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "10055:7054"
+      volumes:
+         - ./fabric-ca/spv/ca:/etc/hyperledger/fabric-ca-server      
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: >
+         sh -c "fabric-ca-server start -b rootca-spv-admin:rootca-spv-adminpw"
+      networks:
+         - securitization
+
+   tls-ca-investor:
+      container_name: tls-ca-investor
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "11054:7054"
+      volumes:
+         - ./fabric-ca/investor/tls-ca:/etc/hyperledger/fabric-ca-server
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: > 
+         sh -c "fabric-ca-server start -b tls-ca-investor-admin:tls-ca-investor-adminpw"
+      networks:
+         - securitization
+
+   rootca-investor:
+      container_name: rootca-investor
+      image: hyperledger/fabric-ca:1.4.8
+      ports:
+         - "11055:7054"
+      volumes:
+         - ./fabric-ca/investor/ca:/etc/hyperledger/fabric-ca-server      
+      environment:
+         - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca-server
+         - FABRIC_CA_SERVER_TLS_ENABLED=true
+      command: >
+         sh -c "fabric-ca-server start -b rootca-investor-admin:rootca-investor-adminpw"
+      networks:
+         - securitization
+

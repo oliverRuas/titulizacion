@@ -1,0 +1,32 @@
+test:
+  name: "Payment Simulation"
+  description: "This benchmark scenario will use ppa transactions, to generate a database to analize bond value."
+  workers:
+    type: local
+    number: 2
+  rounds:
+    - label: writepayments
+      txNumber: 500
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 25
+      callback: benchmarks/callbacks/ppa/payment/payment.js
+      arguments:
+        minterOrg: farmer
+        invokerMspId: farmerMSP
+        client: farmer-client-1
+        endorser1Org: servicer
+        # endorser2Org: spv
+        endorser2Org: investor
+        # endorser3Org: spv
+        depositReference: deposito123211
+        depositBank: Banco123
+observer:
+  type: local
+  interval: 1
+monitor:
+  interval: 1
+  type: ["docker"]
+  docker:
+    containers: ["all"]

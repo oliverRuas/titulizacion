@@ -1,0 +1,29 @@
+test:
+  name: "Payment Simulation"
+  description: "This benchmark scenario will distribute coupons and/or principal for investors."
+  workers:
+    type: local
+    number: 1
+  rounds:
+    - label: writepayments1
+      txNumber: 5000
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 15
+      callback: benchmarks/callbacks/ppa/distribute/distributepayments.js
+      arguments:
+        minterOrg: spv
+        invokerMspId: spvMSP
+        client: spv-client
+        endorser1Org: originator
+        endorser2Org: aggregator
+        endorser3Org: farmer
+observer:
+  type: local
+  interval: 1
+monitor:
+  interval: 1
+  type: ["docker"]
+  docker:
+    containers: ["all"]

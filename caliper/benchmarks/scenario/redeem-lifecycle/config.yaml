@@ -1,0 +1,34 @@
+test:
+  name: "Payment Simulation"
+  description: "This benchmark scenario will simulate a situation where all investors redeem their tokens."
+  workers:
+    type: local
+    number: 2
+  rounds:
+    - label: redeem
+      txNumber: 100
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 25
+      callback: benchmarks/callbacks/ppa/redeem/redeem.js
+      arguments:
+        minterOrg: investor
+        invokerMspId: investorMSP
+        client: investor-client-2
+        endorser1Org: servicer
+        endorser2Org: spv
+        # accountNumber: 123-45678-90TszpOwQUjK?9K=Tk3z#jQQ4VV:SA=P26
+        # bank: BBVATszpOwQUjK?9K=Tk3z#jQQ4VV:SA=P26
+        # salt: TszpOwQUjK?9K=Tk3z#jQQ4VV:SA=P26
+        accountNumber: IjEyMy00NTY3OC05MFRzenBPd1FVaks/OUs9VGszeiNqUVE0VlY6U0E9UDI2Ig==
+        bank: IkJCVkFUc3pwT3dRVWpLPzlLPVRrM3ojalFRNFZWOlNBPVAyNiI=
+        salt: IlRzenBPd1FVaks/OUs9VGszeiNqUVE0VlY6U0E9UDI2Ig==
+observer:
+  type: local
+  interval: 1
+monitor:
+  interval: 1
+  type: ["docker"]
+  docker:
+    containers: ["all"]

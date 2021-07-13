@@ -1,0 +1,887 @@
+version: "2"
+
+networks:
+  securitization:
+
+services:
+  servicer-orderer:
+    container_name: servicer-orderer 
+    image: hyperledger/fabric-orderer:2.2.0
+    volumes:
+      - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block 
+      - ../fabric-ca/servicer/orderers/servicer-orderer/msp:/var/hyperledger/orderer/msp
+      - ../fabric-ca/servicer/orderers/servicer-orderer/tls:/var/hyperledger/orderer/tls
+      - ../fabric-ca/servicer/orderers/servicer-orderer/production:/var/hyperledger/production/orderer
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - ORDERER_GENERAL_LOCALMSPID=servicerMSP 
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/
+    command: orderer
+    networks:
+      - securitization
+    ports: 
+      - 7050:7050
+
+  farmer-orderer:
+    container_name: farmer-orderer 
+    image: hyperledger/fabric-orderer:2.2.0
+    volumes:
+      - ../network/channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block 
+      - ../fabric-ca/farmer/orderers/farmer-orderer/msp:/var/hyperledger/orderer/msp
+      - ../fabric-ca/farmer/orderers/farmer-orderer/tls:/var/hyperledger/orderer/tls
+      - ../fabric-ca/farmer/orderers/farmer-orderer/production:/var/hyperledger/production/orderer
+      - /etc/localtime:/etc/localtime:ro
+    environment: 
+      - ORDERER_GENERAL_LOCALMSPID=farmerMSP 
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/
+    command: orderer
+    networks:
+      - securitization
+    ports: 
+      - 8050:7050
+
+  # aggregator-orderer:
+  #   container_name: aggregator-orderer 
+  #   image: hyperledger/fabric-orderer:2.2.0
+  #   volumes:
+  #     - ../network/channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block 
+  #     - ../fabric-ca/aggregator/orderers/aggregator-orderer/msp:/var/hyperledger/orderer/msp
+  #     - ../fabric-ca/aggregator/orderers/aggregator-orderer/tls:/var/hyperledger/orderer/tls
+  #     - ../fabric-ca/aggregator/orderers/aggregator-orderer/production:/var/hyperledger/production/orderer
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment: 
+  #     - ORDERER_GENERAL_LOCALMSPID=aggregatorMSP 
+  #     - FABRIC_LOGGING_SPEC=INFO
+  #     - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+  #     - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+  #     - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/orderer/orderer.genesis.block
+  #     - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+  #     - ORDERER_GENERAL_TLS_ENABLED=true
+  #     - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+  #     - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+  #     - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+  #     - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+  #     - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+  #     - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/
+  #   command: orderer
+  #   networks:
+  #     - securitization
+  #   ports: 
+  #     - 9050:7050
+
+  spv-orderer:
+    container_name: spv-orderer 
+    image: hyperledger/fabric-orderer:2.2.0
+    volumes:
+      - ../network/channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block 
+      - ../fabric-ca/spv/orderers/spv-orderer/msp:/var/hyperledger/orderer/msp
+      - ../fabric-ca/spv/orderers/spv-orderer/tls:/var/hyperledger/orderer/tls
+      - ../fabric-ca/spv/orderers/spv-orderer/production:/var/hyperledger/production/orderer
+      - /etc/localtime:/etc/localtime:ro
+    environment: 
+      - ORDERER_GENERAL_LOCALMSPID=spvMSP 
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/
+    command: orderer
+    networks:
+      - securitization
+    ports: 
+      - 10050:7050
+
+  investor-orderer:
+    container_name: investor-orderer 
+    image: hyperledger/fabric-orderer:2.2.0
+    volumes:
+      - ../network/channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block 
+      - ../fabric-ca/investor/orderers/investor-orderer/msp:/var/hyperledger/orderer/msp
+      - ../fabric-ca/investor/orderers/investor-orderer/tls:/var/hyperledger/orderer/tls
+      - ../fabric-ca/investor/orderers/investor-orderer/production:/var/hyperledger/production/orderer
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - ORDERER_GENERAL_LOCALMSPID=investorMSP 
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/
+    command: orderer
+    networks:
+      - securitization
+    ports: 
+      - 11050:7050
+
+
+  servicer-peer:
+    container_name: servicer-peer
+    image: hyperledger/fabric-peer:2.2.0
+    volumes: 
+      - /var/run/:/host/var/run/
+      - ../fabric-ca/servicer/peers/servicer-peer/msp:/etc/hyperledger/fabric/msp
+      - ../fabric-ca/servicer/peers/servicer-peer/tls:/etc/hyperledger/fabric/tls
+      - ../fabric-ca/servicer/peers/servicer-peer/production:/var/hyperledger/production
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+      - CORE_VM_DOCKER_ATTACHSTDOUT=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=servicer-peer
+      - CORE_PEER_ADDRESS=servicer-peer:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=servicer-peer:7051
+      - CORE_PEER_LOCALMSPID=servicerMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-servicer:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-servicer-admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-servicer-adminpw
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    depends_on: 
+      - couchdb-servicer
+    command: peer node start
+    networks:
+      - securitization
+    ports:
+      - 7051:7051 
+
+  farmer-peer:
+    container_name: farmer-peer
+    image: hyperledger/fabric-peer:2.2.0
+    volumes: 
+      - /var/run/:/host/var/run/
+      - ../fabric-ca/farmer/peers/farmer-peer/msp:/etc/hyperledger/fabric/msp
+      - ../fabric-ca/farmer/peers/farmer-peer/tls:/etc/hyperledger/fabric/tls
+      - ../fabric-ca/farmer/peers/farmer-peer/production:/var/hyperledger/production
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+      - CORE_VM_DOCKER_ATTACHSTDOUT=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=farmer-peer
+      - CORE_PEER_ADDRESS=farmer-peer:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=farmer-peer:7051
+      - CORE_PEER_LOCALMSPID=farmerMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-farmer:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-farmer-admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-farmer-adminpw
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    depends_on: 
+      - couchdb-farmer
+    command: peer node start
+    networks:
+      - securitization 
+    ports:
+      - 8051:7051
+
+  # aggregator-peer:
+  #   container_name: aggregator-peer
+  #   image: hyperledger/fabric-peer:2.2.0
+  #   volumes: 
+  #     - /var/run/:/host/var/run/
+  #     - ../fabric-ca/aggregator/peers/aggregator-peer/msp:/etc/hyperledger/fabric/msp
+  #     - ../fabric-ca/aggregator/peers/aggregator-peer/tls:/etc/hyperledger/fabric/tls
+  #     - ../fabric-ca/aggregator/peers/aggregator-peer/production:/var/hyperledger/production
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+  #     - CORE_VM_DOCKER_ATTACHSTDOUT=true
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     - CORE_PEER_GOSSIP_USELEADERELECTION=true
+  #     - CORE_PEER_GOSSIP_ORGLEADER=false
+  #     - CORE_PEER_PROFILE_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+  #     - CORE_PEER_ID=aggregator-peer
+  #     - CORE_PEER_ADDRESS=aggregator-peer:7051
+  #     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=aggregator-peer:7051
+  #     - CORE_PEER_LOCALMSPID=aggregatorMSP
+  #     - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-aggregator:5984
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-aggregator-admin
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-aggregator-adminpw
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   depends_on: 
+  #     - couchdb-aggregator
+  #   command: peer node start
+  #   networks:
+  #     - securitization 
+  #   ports:
+  #     - 9051:7051
+
+  spv-peer:
+    container_name: spv-peer
+    image: hyperledger/fabric-peer:2.2.0
+    volumes: 
+      - /var/run/:/host/var/run/
+      - ../fabric-ca/spv/peers/spv-peer/msp:/etc/hyperledger/fabric/msp
+      - ../fabric-ca/spv/peers/spv-peer/tls:/etc/hyperledger/fabric/tls
+      - ../fabric-ca/spv/peers/spv-peer/production:/var/hyperledger/production
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+      - CORE_VM_DOCKER_ATTACHSTDOUT=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=spv-peer
+      - CORE_PEER_ADDRESS=spv-peer:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=spv-peer:7051
+      - CORE_PEER_LOCALMSPID=spvMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-spv:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-spv-admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-spv-adminpw
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    depends_on: 
+      - couchdb-spv
+    command: peer node start
+    networks:
+      - securitization 
+    ports:
+      - 10051:7051
+
+  investor-peer-1:
+    container_name: investor-peer-1
+    image: hyperledger/fabric-peer:2.2.0
+    volumes: 
+      - /var/run/:/host/var/run/
+      - ../fabric-ca/investor/peers/investor-peer-1/msp:/etc/hyperledger/fabric/msp
+      - ../fabric-ca/investor/peers/investor-peer-1/tls:/etc/hyperledger/fabric/tls
+      - ../fabric-ca/investor/peers/investor-peer-1/production:/var/hyperledger/production
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+      - CORE_VM_DOCKER_ATTACHSTDOUT=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=investor-peer-1
+      - CORE_PEER_ADDRESS=investor-peer-1:7051
+      # - CORE_PEER_GOSSIP_BOOTSTRAP=investor-peer-1:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=investor-peer-1:7051
+      - CORE_PEER_LOCALMSPID=investorMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-investor-1:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-investor-admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-investor-adminpw
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    depends_on: 
+      - couchdb-investor-1
+    command: peer node start
+    networks:
+      - securitization 
+    ports:
+      - 11051:7051
+
+
+  # investor-peer-2:
+  #   container_name: investor-peer-2
+  #   image: hyperledger/fabric-peer:2.2.0
+  #   volumes: 
+  #     - /var/run/:/host/var/run/
+  #     - ../fabric-ca/investor/peers/investor-peer-2/msp:/etc/hyperledger/fabric/msp
+  #     - ../fabric-ca/investor/peers/investor-peer-2/tls:/etc/hyperledger/fabric/tls
+  #     - ../fabric-ca/investor/peers/investor-peer-2/production:/var/hyperledger/production
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+  #     - CORE_VM_DOCKER_ATTACHSTDOUT=true
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     # - CORE_PEER_GOSSIP_USELEADERELECTION=false
+  #     # - CORE_PEER_GOSSIP_ORGLEADER=true
+  #     - CORE_PEER_PROFILE_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+  #     - CORE_PEER_ID=investor-peer-2
+  #     - CORE_PEER_ADDRESS=investor-peer-2:7051
+  #     - CORE_PEER_GOSSIP_BOOTSTRAP=investor-peer-1:7051
+  #     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=investor-peer-2:7051
+  #     - CORE_PEER_LOCALMSPID=investorMSP
+  #     - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-investor-2:5984
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-investor-admin
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-investor-adminpw
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   depends_on: 
+  #     - couchdb-investor-2
+  #   command: peer node start
+  #   networks:
+  #     - securitization 
+  #   ports:
+  #     - 12051:7051
+
+  # investor-peer-3:
+  #   container_name: investor-peer-3
+  #   image: hyperledger/fabric-peer:2.2.0
+  #   volumes: 
+  #     - /var/run/:/host/var/run/
+  #     - ../fabric-ca/investor/peers/investor-peer-3/msp:/etc/hyperledger/fabric/msp
+  #     - ../fabric-ca/investor/peers/investor-peer-3/tls:/etc/hyperledger/fabric/tls
+  #     - ../fabric-ca/investor/peers/investor-peer-3/production:/var/hyperledger/production
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+  #     - CORE_VM_DOCKER_ATTACHSTDOUT=true
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     # - CORE_PEER_GOSSIP_USELEADERELECTION=false
+  #     # - CORE_PEER_GOSSIP_ORGLEADER=true
+  #     - CORE_PEER_PROFILE_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+  #     - CORE_PEER_ID=investor-peer-3
+  #     - CORE_PEER_ADDRESS=investor-peer-3:7051
+  #     - CORE_PEER_GOSSIP_BOOTSTRAP=investor-peer-1:7051
+  #     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=investor-peer-3:7051
+  #     - CORE_PEER_LOCALMSPID=investorMSP
+  #     - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-investor-3:5984
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-investor-admin
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-investor-adminpw
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   depends_on: 
+  #     - couchdb-investor-3
+  #   command: peer node start
+  #   networks:
+  #     - securitization 
+  #   ports:
+  #     - 13051:7051
+
+
+  # investor-peer-4:
+  #   container_name: investor-peer-4
+  #   image: hyperledger/fabric-peer:2.2.0
+  #   volumes: 
+  #     - /var/run/:/host/var/run/
+  #     - ../fabric-ca/investor/peers/investor-peer-4/msp:/etc/hyperledger/fabric/msp
+  #     - ../fabric-ca/investor/peers/investor-peer-4/tls:/etc/hyperledger/fabric/tls
+  #     - ../fabric-ca/investor/peers/investor-peer-4/production:/var/hyperledger/production
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+  #     - CORE_VM_DOCKER_ATTACHSTDOUT=true
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     # - CORE_PEER_GOSSIP_USELEADERELECTION=false
+  #     # - CORE_PEER_GOSSIP_ORGLEADER=true
+  #     - CORE_PEER_PROFILE_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+  #     - CORE_PEER_ID=investor-peer-4
+  #     - CORE_PEER_ADDRESS=investor-peer-4:7051
+  #     - CORE_PEER_GOSSIP_BOOTSTRAP=investor-peer-1:7051
+  #     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=investor-peer-4:7051
+  #     - CORE_PEER_LOCALMSPID=investorMSP
+  #     - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-investor-4:5984
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-investor-admin
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-investor-adminpw
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   depends_on: 
+  #     - couchdb-investor-4
+  #   command: peer node start
+  #   networks:
+  #     - securitization 
+  #   ports:
+  #     - 14051:7051
+
+  # investor-peer-5:
+  #   container_name: investor-peer-5
+  #   image: hyperledger/fabric-peer:2.2.0
+  #   volumes: 
+  #     - /var/run/:/host/var/run/
+  #     - ../fabric-ca/investor/peers/investor-peer-5/msp:/etc/hyperledger/fabric/msp
+  #     - ../fabric-ca/investor/peers/investor-peer-5/tls:/etc/hyperledger/fabric/tls
+  #     - ../fabric-ca/investor/peers/investor-peer-5/production:/var/hyperledger/production
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+  #     - CORE_VM_DOCKER_ATTACHSTDOUT=true
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     # - CORE_PEER_GOSSIP_USELEADERELECTION=false
+  #     # - CORE_PEER_GOSSIP_ORGLEADER=true
+  #     - CORE_PEER_PROFILE_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+  #     - CORE_PEER_ID=investor-peer-5
+  #     - CORE_PEER_ADDRESS=investor-peer-5:7051
+  #     - CORE_PEER_GOSSIP_BOOTSTRAP=investor-peer-1:7051
+  #     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=investor-peer-5:7051
+  #     - CORE_PEER_LOCALMSPID=investorMSP
+  #     - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-investor-5:5984
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-investor-admin
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-investor-adminpw
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   depends_on: 
+  #     - couchdb-investor-5
+  #   command: peer node start
+  #   networks:
+  #     - securitization 
+  #   ports:
+  #     - 15051:7051
+
+  # investor-peer-6:
+  #   container_name: investor-peer-6
+  #   image: hyperledger/fabric-peer:2.2.0
+  #   volumes: 
+  #     - /var/run/:/host/var/run/
+  #     - ../fabric-ca/investor/peers/investor-peer-6/msp:/etc/hyperledger/fabric/msp
+  #     - ../fabric-ca/investor/peers/investor-peer-6/tls:/etc/hyperledger/fabric/tls
+  #     - ../fabric-ca/investor/peers/investor-peer-6/production:/var/hyperledger/production
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+  #     - CORE_VM_DOCKER_ATTACHSTDOUT=true
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     # - CORE_PEER_GOSSIP_USELEADERELECTION=false
+  #     # - CORE_PEER_GOSSIP_ORGLEADER=true
+  #     - CORE_PEER_PROFILE_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+  #     - CORE_PEER_ID=investor-peer-6
+  #     - CORE_PEER_ADDRESS=investor-peer-6:7051
+  #     - CORE_PEER_GOSSIP_BOOTSTRAP=investor-peer-1:7051
+  #     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=investor-peer-6:7051
+  #     - CORE_PEER_LOCALMSPID=investorMSP
+  #     - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-investor-6:5984
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-investor-admin
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-investor-adminpw
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   depends_on: 
+  #     - couchdb-investor-6
+  #   command: peer node start
+  #   networks:
+  #     - securitization 
+  #   ports:
+  #     - 16051:7051
+
+
+  # investor-peer-7:
+  #   container_name: investor-peer-7
+  #   image: hyperledger/fabric-peer:2.2.0
+  #   volumes: 
+  #     - /var/run/:/host/var/run/
+  #     - ../fabric-ca/investor/peers/investor-peer-7/msp:/etc/hyperledger/fabric/msp
+  #     - ../fabric-ca/investor/peers/investor-peer-7/tls:/etc/hyperledger/fabric/tls
+  #     - ../fabric-ca/investor/peers/investor-peer-7/production:/var/hyperledger/production
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_securitization
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+  #     - CORE_CHAINCODE_LOGGING_SHIM=DEBUG
+  #     - CORE_VM_DOCKER_ATTACHSTDOUT=true
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     # - CORE_PEER_GOSSIP_USELEADERELECTION=false
+  #     # - CORE_PEER_GOSSIP_ORGLEADER=true
+  #     - CORE_PEER_PROFILE_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+  #     - CORE_PEER_ID=investor-peer-7
+  #     - CORE_PEER_ADDRESS=investor-peer-7:7051
+  #     - CORE_PEER_GOSSIP_BOOTSTRAP=investor-peer-1:7051
+  #     - CORE_PEER_GOSSIP_EXTERNALENDPOINT=investor-peer-7:7051
+  #     - CORE_PEER_LOCALMSPID=investorMSP
+  #     - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb-investor-7:5984
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb-investor-admin
+  #     - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=couchdb-investor-adminpw
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   depends_on: 
+  #     - couchdb-investor-7
+  #   command: peer node start
+  #   networks:
+  #     - securitization 
+  #   ports:
+  #     - 17051:7051
+
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:2.2.0
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=servicer-peer:7051
+      - CORE_PEER_LOCALMSPID=servicerMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/servicer/peers/servicer-peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/servicer/peers/servicer-peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/servicer/peers/servicer-peer/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/servicer/admins/servicer-admin/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../chaincode/:/opt/gopath/src/github.com/chaincode
+      - ../fabric-ca:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+      - /etc/localtime:/etc/localtime:ro
+    depends_on: 
+      - servicer-peer
+      - farmer-peer
+      # - aggregator-peer
+      - spv-peer
+      - investor-peer-1
+      # - investor-peer-2
+      # - investor-peer-3
+      # - investor-peer-4
+      # - investor-peer-5
+      # - investor-peer-6
+      # - investor-peer-7
+    networks:
+      - securitization
+
+  # cli-farmer:
+  #   container_name: cli-farmer
+  #   image: hyperledger/fabric-tools:2.2.0
+  #   tty: true
+  #   stdin_open: true
+  #   environment:
+  #     - GOPATH=/opt/gopath
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_PEER_ID=cli-farmer
+  #     - CORE_PEER_ADDRESS=farmer-peer:7051
+  #     - CORE_PEER_LOCALMSPID=farmerMSP
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/farmer/peers/farmer-peer/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/farmer/peers/farmer-peer/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/farmer/peers/farmer-peer/tls/ca.crt
+  #     - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/farmer/admins/farmer-admin/msp
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   command: /bin/bash
+  #   volumes:
+  #     - /var/run/:/host/var/run/
+  #     - ../chaincode/:/opt/gopath/src/github.com/chaincode
+  #     - ../fabric-ca:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+  #     - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+  #     - /etc/localtime:/etc/localtime:ro
+  #   networks:
+  #     - securitization
+
+
+  # cli-aggregator:
+  #   container_name: cli-aggregator
+  #   image: hyperledger/fabric-tools:2.2.0
+  #   tty: true
+  #   stdin_open: true
+  #   environment:
+  #     - GOPATH=/opt/gopath
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_PEER_ID=cli-aggregator
+  #     - CORE_PEER_ADDRESS=aggregator-peer:7051
+  #     - CORE_PEER_LOCALMSPID=aggregatorMSP
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/aggregator/peers/aggregator-peer/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/aggregator/peers/aggregator-peer/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/aggregator/peers/aggregator-peer/tls/ca.crt
+  #     - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/aggregator/admins/aggregator-admin/msp
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   command: /bin/bash
+  #   volumes:
+  #     - /var/run/:/host/var/run/
+  #     - ../chaincode/:/opt/gopath/src/github.com/chaincode
+  #     - ../fabric-ca:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+  #     - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+  #     - /etc/localtime:/etc/localtime:ro
+  #   networks:
+  #     - securitization
+
+
+  # cli-spv:
+  #   container_name: cli-spv
+  #   image: hyperledger/fabric-tools:2.2.0
+  #   tty: true
+  #   stdin_open: true
+  #   environment:
+  #     - GOPATH=/opt/gopath
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_PEER_ID=cli-spv
+  #     - CORE_PEER_ADDRESS=spv-peer:7051
+  #     - CORE_PEER_LOCALMSPID=spvMSP
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/spv/peers/spv-peer/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/spv/peers/spv-peer/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/spv/peers/spv-peer/tls/ca.crt
+  #     - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/spv/admins/spv-admin/msp
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   command: /bin/bash
+  #   volumes:
+  #     - /var/run/:/host/var/run/
+  #     - ../chaincode/:/opt/gopath/src/github.com/chaincode
+  #     - ../fabric-ca:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+  #     - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+  #     - /etc/localtime:/etc/localtime:ro
+  #   networks:
+  #     - securitization
+
+
+  # cli-underwritter:
+  #   container_name: cli-underwritter
+  #   image: hyperledger/fabric-tools:2.2.0
+  #   tty: true
+  #   stdin_open: true
+  #   environment:
+  #     - GOPATH=/opt/gopath
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - FABRIC_LOGGING_SPEC=DEBUG
+  #     - CORE_PEER_ID=cli-underwritter
+  #     - CORE_PEER_ADDRESS=underwritter-peer:7051
+  #     - CORE_PEER_LOCALMSPID=underwritterMSP
+  #     - CORE_PEER_TLS_ENABLED=true
+  #     - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/underwritter/peers/underwritter-peer/tls/server.crt
+  #     - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/underwritter/peers/underwritter-peer/tls/server.key
+  #     - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/underwritter/peers/underwritter-peer/tls/ca.crt
+  #     - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/underwritter/admins/underwritter-admin/msp
+  #   working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+  #   command: /bin/bash
+  #   volumes:
+  #     - /var/run/:/host/var/run/
+  #     - ../chaincode/:/opt/gopath/src/github.com/chaincode
+  #     - ../fabric-ca:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+  #     - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+  #     - /etc/localtime:/etc/localtime:ro
+  #   networks:
+  #     - securitization
+
+
+  couchdb-servicer:
+    image: couchdb:3.1
+    environment:
+      - COUCHDB_USER=couchdb-servicer-admin
+      - COUCHDB_PASSWORD=couchdb-servicer-adminpw
+    ports:
+      - 5984:5984
+    container_name: couchdb-servicer
+    networks:
+      - securitization
+
+  couchdb-farmer:
+    image: couchdb:3.1
+    environment:
+      - COUCHDB_USER=couchdb-farmer-admin
+      - COUCHDB_PASSWORD=couchdb-farmer-adminpw
+    ports:
+      - 5985:5984
+    container_name: couchdb-farmer
+    networks:
+      - securitization
+
+  # couchdb-aggregator:
+  #   image: couchdb:3.1
+  #   environment:
+  #     - COUCHDB_USER=couchdb-aggregator-admin
+  #     - COUCHDB_PASSWORD=couchdb-aggregator-adminpw
+  #   ports:
+  #     - 5986:5984
+  #   container_name: couchdb-aggregator
+  #   networks:
+  #     - securitization
+
+
+  couchdb-spv:
+    image: couchdb:3.1
+    environment:
+      - COUCHDB_USER=couchdb-spv-admin
+      - COUCHDB_PASSWORD=couchdb-spv-adminpw
+    ports:
+      - 5987:5984
+    container_name: couchdb-spv
+    networks:
+      - securitization
+
+
+  couchdb-investor-1:
+    image: couchdb:3.1
+    environment:
+      - COUCHDB_USER=couchdb-investor-admin
+      - COUCHDB_PASSWORD=couchdb-investor-adminpw
+    ports:
+      - 5988:5984
+    container_name: couchdb-investor-1
+    networks:
+      - securitization
+
+  # couchdb-investor-2:
+  #   image: couchdb:3.1
+  #   environment:
+  #     - COUCHDB_USER=couchdb-investor-admin
+  #     - COUCHDB_PASSWORD=couchdb-investor-adminpw
+  #   ports:
+  #     - 5989:5984
+  #   container_name: couchdb-investor-2
+  #   networks:
+  #     - securitization
+
+  # couchdb-investor-3:
+  #   image: couchdb:3.1
+  #   environment:
+  #     - COUCHDB_USER=couchdb-investor-admin
+  #     - COUCHDB_PASSWORD=couchdb-investor-adminpw
+  #   ports:
+  #     - 5990:5984
+  #   container_name: couchdb-investor-3
+  #   networks:
+  #     - securitization
+
+  # couchdb-investor-4:
+  #   image: couchdb:3.1
+  #   environment:
+  #     - COUCHDB_USER=couchdb-investor-admin
+  #     - COUCHDB_PASSWORD=couchdb-investor-adminpw
+  #   ports:
+  #     - 5991:5984
+  #   container_name: couchdb-investor-4
+  #   networks:
+  #     - securitization
+
+  # couchdb-investor-5:
+  #   image: couchdb:3.1
+  #   environment:
+  #     - COUCHDB_USER=couchdb-investor-admin
+  #     - COUCHDB_PASSWORD=couchdb-investor-adminpw
+  #   ports:
+  #     - 5992:5984
+  #   container_name: couchdb-investor-5
+  #   networks:
+  #     - securitization
+
+  # couchdb-investor-6:
+  #   image: couchdb:3.1
+  #   environment:
+  #     - COUCHDB_USER=couchdb-investor-admin
+  #     - COUCHDB_PASSWORD=couchdb-investor-adminpw
+  #   ports:
+  #     - 5993:5984
+  #   container_name: couchdb-investor-6
+  #   networks:
+  #     - securitization
+
+  # couchdb-investor-7:
+  #   image: couchdb:3.1
+  #   environment:
+  #     - COUCHDB_USER=couchdb-investor-admin
+  #     - COUCHDB_PASSWORD=couchdb-investor-adminpw
+  #   ports:
+  #     - 5994:5984
+  #   container_name: couchdb-investor-7
+  #   networks:
+  #     - securitization
+                                            

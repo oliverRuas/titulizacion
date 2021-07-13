@@ -1,0 +1,353 @@
+<!doctype html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+    function plotChart(divId, chartData) {
+        // Convert from stringified html, to valid JSON
+        const chartDetails = JSON.parse(chartData.replace(/&quot;/g,'"'));
+        new Chart(document.getElementById(divId), {
+            type: chartDetails.type,
+            data: {
+                labels: chartDetails.labels,
+                datasets: chartDetails.datasets
+            },
+            options: {
+                legend: { display: chartDetails.legend },
+                title: {
+                    display: true,
+                    text: chartDetails.title
+                }
+            }
+        });
+    }
+</script>
+<html>
+<head>
+    <title>Hyperledger Caliper Report</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+        .left-column {
+            position: fixed;
+            width:20%;
+        }
+        .left-column ul {
+            display: block;
+            padding: 0;
+            list-style: none;
+            border-bottom: 1px solid #d9d9d9;
+            font-size: 14px;
+        }
+        .left-column h2{
+            font-size: 24px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column h3{
+            font-size: 18px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column li{
+            margin-left: 10px;
+            margin-bottom: 5px;
+            color: #5e6b73;
+        }
+        .right-column {
+            margin-left: 22%;
+            width:60%;
+        }
+        .right-column table {
+            font-size:11px;
+            color:#333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .right-column h2{
+            font-weight: 400;
+        }
+        .right-column h3{
+            font-weight: 400;
+        }
+        .right-column h4 {
+            font-weight: 400;
+            margin-block-end: 0;
+        }
+        .right-column th {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #f2f2f2;
+        }
+        .right-column td {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+            font-weight: 400;
+        }
+        .tag {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+        }
+        pre {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            overflow:auto;
+            max-height:300px;
+            font-size:12px;
+        }
+        .charting {
+            display:flex;
+            flex-direction:row;
+            flex-wrap: wrap;
+            page-break-inside: auto;
+        }
+        .chart {
+            display:flex;
+            flex:1;
+            max-width: 50%;
+        }
+    </style>
+</head>
+<body style="font-family: IBM Plex Sans; font-weight: 200;">
+    <main>
+        <div class="left-column">
+            <img src="https://hyperledger.github.io/caliper/assets/img/hyperledger_caliper_logo_color.png" style="width:95%;" alt="">
+            <ul>
+                <h3>&nbspBasic information</h3>
+                <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">Payment Simulation</span></li>
+                <li>Description: &nbsp<span style="font-weight: 500;">This benchmark scenario will use ppa transactions, to generate a database to analize bond value.</span></li>
+                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">1</span></li>
+                <li><a href="#benchmarkInfo">Details</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspBenchmark results</h3>
+                <li><a href="#benchmarksummary">Summary</a></li>
+                    <li><a href="#writepayments">writepayments</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspSystem under test</h3>
+                <li><a href="#sutdetails">Details</a></li>
+            </ul>
+        </div>
+
+        <div class="right-column">
+            <h1 style="padding-top: 3em; font-weight: 500;">Caliper report</h1>
+            <div style="border-bottom: 1px solid #d9d9d9; margin-bottom: 10px;" id="benchmarksummary">
+                <table style="min-width: 100%;">
+                    <h3>Summary of performance metrics</h3>
+                    <tr>
+                         <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                    </tr>
+
+                    <tr>
+                         <td>writepayments</td> <td>496</td> <td>2</td> <td>10.1</td> <td>82.39</td> <td>11.24</td> <td>63.60</td> <td>4.4</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="writepayments">
+                <h2>Benchmark round: writepayments</h2>
+                <p></p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">rateControl:
+  type: fixed-rate
+  opts:
+    tps: 10
+</pre>
+                        <h3>Performance metrics for writepayments</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>writepayments</td> <td>496</td> <td>2</td> <td>10.1</td> <td>82.39</td> <td>11.24</td> <td>63.60</td> <td>4.4</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for writepayments</h3>
+                            <h4>Resource monitor: docker</h4>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                <table>
+                                    <tr>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [MB]</th> <th>Disc Read [MB]</th>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-investor-peer-5-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>0.98</td> <td>0.02</td> <td>13.1</td> <td>12.3</td> <td>0.00223</td> <td>0.00133</td> <td>0.00</td> <td>1.24</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-investor-peer-6-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>0.03</td> <td>0.00</td> <td>12.4</td> <td>12.0</td> <td>0.00223</td> <td>0.00133</td> <td>0.00</td> <td>0.527</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-investor-peer-3-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>1.02</td> <td>0.02</td> <td>12.9</td> <td>12.1</td> <td>0.00227</td> <td>0.00137</td> <td>0.00</td> <td>1.25</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-spv-peer-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>1.07</td> <td>0.03</td> <td>13.4</td> <td>12.6</td> <td>0.00241</td> <td>0.00157</td> <td>0.00</td> <td>2.48</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-investor-peer-4-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>0.02</td> <td>0.00</td> <td>14.1</td> <td>12.8</td> <td>0.00227</td> <td>0.00137</td> <td>0.00</td> <td>2.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-investor-peer-1-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>1.26</td> <td>0.03</td> <td>13.2</td> <td>12.5</td> <td>0.00241</td> <td>0.00157</td> <td>0.00</td> <td>1.07</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-investor-peer-7-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>1.58</td> <td>0.03</td> <td>13.6</td> <td>12.4</td> <td>0.00227</td> <td>0.00137</td> <td>0.00</td> <td>1.81</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-investor-peer-2-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>5.91</td> <td>1.25</td> <td>26.3</td> <td>22.4</td> <td>1.41</td> <td>1.09</td> <td>0.00</td> <td>5.67</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-servicer-peer-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>4.32</td> <td>0.96</td> <td>27.2</td> <td>24.1</td> <td>1.42</td> <td>1.10</td> <td>0.00</td> <td>6.20</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-farmer-peer-securitizationcodev1.0-c654db7a203f18f889bbb12890784bb98377972d7197240d7f1ddfaa8193f86f</td> <td>5.03</td> <td>1.17</td> <td>27.1</td> <td>22.3</td> <td>1.42</td> <td>1.11</td> <td>0.00</td> <td>5.58</td>
+                                    </tr>
+                                    <tr>
+                                         <td>cli</td> <td>0.00</td> <td>0.00</td> <td>1.24</td> <td>1.24</td> <td>0.000961</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-peer-7</td> <td>18.05</td> <td>9.84</td> <td>110</td> <td>99.6</td> <td>19.7</td> <td>17.2</td> <td>4.11</td> <td>0.371</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-peer-3</td> <td>15.51</td> <td>9.47</td> <td>108</td> <td>96.5</td> <td>20.0</td> <td>16.9</td> <td>4.11</td> <td>0.297</td>
+                                    </tr>
+                                    <tr>
+                                         <td>farmer-peer</td> <td>36.55</td> <td>13.58</td> <td>102</td> <td>92.7</td> <td>7.84</td> <td>5.24</td> <td>3.55</td> <td>1.44</td>
+                                    </tr>
+                                    <tr>
+                                         <td>spv-peer</td> <td>26.86</td> <td>12.37</td> <td>88.8</td> <td>85.5</td> <td>5.15</td> <td>1.92</td> <td>4.11</td> <td>1.42</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-peer-2</td> <td>23.82</td> <td>12.20</td> <td>128</td> <td>108</td> <td>21.6</td> <td>17.2</td> <td>4.11</td> <td>2.38</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-peer-4</td> <td>15.75</td> <td>9.82</td> <td>116</td> <td>102</td> <td>19.3</td> <td>17.2</td> <td>4.11</td> <td>0.570</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-peer-1</td> <td>13.97</td> <td>9.73</td> <td>125</td> <td>108</td> <td>20.4</td> <td>18.5</td> <td>4.11</td> <td>0.645</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-peer-6</td> <td>15.29</td> <td>10.02</td> <td>122</td> <td>108</td> <td>21.4</td> <td>17.6</td> <td>4.11</td> <td>0.449</td>
+                                    </tr>
+                                    <tr>
+                                         <td>servicer-peer</td> <td>38.42</td> <td>13.32</td> <td>104</td> <td>97.4</td> <td>7.83</td> <td>5.02</td> <td>3.09</td> <td>7.23</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-peer-5</td> <td>16.66</td> <td>9.77</td> <td>114</td> <td>99.6</td> <td>21.2</td> <td>16.9</td> <td>4.11</td> <td>0.613</td>
+                                    </tr>
+                                    <tr>
+                                         <td>servicer-orderer</td> <td>11.37</td> <td>1.72</td> <td>55.7</td> <td>46.3</td> <td>7.99</td> <td>11.7</td> <td>7.52</td> <td>4.96</td>
+                                    </tr>
+                                    <tr>
+                                         <td>farmer-orderer</td> <td>4.69</td> <td>1.34</td> <td>56.9</td> <td>46.4</td> <td>4.70</td> <td>19.3</td> <td>7.53</td> <td>0.867</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-farmer</td> <td>40.50</td> <td>11.73</td> <td>73.2</td> <td>60.0</td> <td>0.969</td> <td>0.934</td> <td>1.29</td> <td>3.68</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-investor-2</td> <td>46.73</td> <td>12.13</td> <td>76.2</td> <td>63.4</td> <td>1.06</td> <td>0.966</td> <td>1.48</td> <td>3.81</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-investor-7</td> <td>16.73</td> <td>9.90</td> <td>70.7</td> <td>60.1</td> <td>0.649</td> <td>0.323</td> <td>1.45</td> <td>3.63</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-investor-3</td> <td>18.14</td> <td>9.97</td> <td>71.2</td> <td>59.0</td> <td>0.646</td> <td>0.324</td> <td>1.45</td> <td>5.49</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-investor-4</td> <td>18.49</td> <td>10.47</td> <td>62.5</td> <td>55.5</td> <td>0.647</td> <td>0.324</td> <td>1.48</td> <td>3.96</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-investor-5</td> <td>17.43</td> <td>10.32</td> <td>68.9</td> <td>55.7</td> <td>0.646</td> <td>0.324</td> <td>1.48</td> <td>3.93</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-servicer</td> <td>44.57</td> <td>11.63</td> <td>72.2</td> <td>58.6</td> <td>0.911</td> <td>0.911</td> <td>1.18</td> <td>3.72</td>
+                                    </tr>
+                                    <tr>
+                                         <td>investor-orderer</td> <td>3.52</td> <td>0.64</td> <td>53.2</td> <td>40.7</td> <td>4.02</td> <td>7.72</td> <td>7.52</td> <td>0.469</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-investor-1</td> <td>18.29</td> <td>10.88</td> <td>64.5</td> <td>57.0</td> <td>0.650</td> <td>0.323</td> <td>1.48</td> <td>4.42</td>
+                                    </tr>
+                                    <tr>
+                                         <td>spv-orderer</td> <td>2.87</td> <td>0.77</td> <td>52.4</td> <td>42.2</td> <td>4.06</td> <td>15.1</td> <td>7.52</td> <td>0.277</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-spv</td> <td>16.64</td> <td>10.43</td> <td>67.7</td> <td>58.9</td> <td>0.638</td> <td>0.324</td> <td>1.48</td> <td>4.12</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb-investor-6</td> <td>21.55</td> <td>10.59</td> <td>69.7</td> <td>58.2</td> <td>0.645</td> <td>0.324</td> <td>1.48</td> <td>3.59</td>
+                                    </tr>
+                                    <tr>
+                                         <td>tls-ca-farmer</td> <td>0.20</td> <td>0.00</td> <td>5.63</td> <td>5.59</td> <td>0.000961</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>tls-ca-servicer</td> <td>0.26</td> <td>0.01</td> <td>5.45</td> <td>5.44</td> <td>0.00103</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>rootca-investor</td> <td>0.13</td> <td>0.00</td> <td>9.50</td> <td>8.20</td> <td>0.000961</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>rootca-farmer</td> <td>0.14</td> <td>0.00</td> <td>5.27</td> <td>5.27</td> <td>0.000961</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>rootca-servicer</td> <td>0.00</td> <td>0.00</td> <td>5.89</td> <td>5.86</td> <td>0.000961</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>tls-ca-investor</td> <td>0.00</td> <td>0.00</td> <td>5.75</td> <td>5.37</td> <td>0.00103</td> <td>0.00</td> <td>0.00</td> <td>0.410</td>
+                                    </tr>
+                                    <tr>
+                                         <td>tls-ca-spv</td> <td>0.15</td> <td>0.00</td> <td>5.22</td> <td>5.21</td> <td>0.000961</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>rootca-spv</td> <td>0.53</td> <td>0.01</td> <td>5.23</td> <td>5.23</td> <td>0.000961</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                </table>
+                                </tr>
+                            </table>
+                            <div class="charting">
+                            </div>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
+                <h2>Test Environment</h2>
+                <h3>benchmark config</h3>
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: Payment Simulation
+description: &gt;-
+  This benchmark scenario will use ppa transactions, to generate a database to
+  analize bond value.
+workers:
+  type: local
+  number: 3
+rounds:
+  - label: writepayments
+    txNumber: 500
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 10
+    callback: benchmarks&#x2F;callbacks&#x2F;ppa&#x2F;payment&#x2F;payment.js
+    arguments:
+      minterOrg: farmer
+      invokerMspId: farmerMSP
+      client: farmer-client-1
+      endorser1Org: servicer
+      endorser2Org: investor
+      depositReference: deposito123211
+      depositBank: Banco123
+</pre>
+                <h3>SUT</h3>
+                <pre id="sutdetails">not provided</pre>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
